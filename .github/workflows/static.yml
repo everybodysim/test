@@ -22,18 +22,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Step to copy your home.html to index.html inside a temporary folder
       - name: Prepare artifact
         run: |
+          rm -rf artifact
           mkdir artifact
-          cp published/home.html artifact/index.html
-          cp -r published/* artifact/  # optional: copy other files like CSS/JS/images
+          # Copy home.html to index.html
+          cp PUBLISHED/home.html artifact/index.html
+          # Copy all other files (CSS, JS, images) except home.html
+          rsync -av --exclude 'home.html' PUBLISHED/ artifact/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
